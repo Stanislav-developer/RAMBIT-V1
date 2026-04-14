@@ -21,7 +21,7 @@ Servo leftFlipperServo;
 #define R_LPWM_PIN 25
 
 // --- Піни Драйвера 2 (Лівий) ---
-#define L_EN_PIN 14
+#define L_EN_PIN 21
 #define L_RPWM_PIN 32
 #define L_LPWM_PIN 33
 
@@ -51,11 +51,21 @@ bool invertRightMotor = true;
 // =======================================================
 
 void setup() {
-  Serial.begin(115200);
+  
   
   pinMode(LED_PIN, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW); 
+  // --- 2. НАЛАШТУВАННЯ МОТОРІВ (ЖОРСТКЕ БЛОКУВАННЯ ПРИ СТАРТІ) ---
+  pinMode(R_EN_PIN, OUTPUT);
+  pinMode(L_EN_PIN, OUTPUT);
+  // Драйвери фізично знеструмлені!
+  digitalWrite(R_EN_PIN, LOW); 
+  digitalWrite(L_EN_PIN, LOW); 
+
+  delay(1000);
+
+  Serial.begin(115200);
 
   crsfSerial.begin(420000, SERIAL_8N1, RX_PIN, TX_PIN);
   crsf.begin(crsfSerial);
@@ -71,12 +81,7 @@ void setup() {
   rightFlipperServo.attach(SERVO_R_PIN, 500, 2400);
   leftFlipperServo.attach(SERVO_L_PIN, 500, 2400);
 
-  // --- 2. НАЛАШТУВАННЯ МОТОРІВ (ЖОРСТКЕ БЛОКУВАННЯ ПРИ СТАРТІ) ---
-  pinMode(R_EN_PIN, OUTPUT);
-  pinMode(L_EN_PIN, OUTPUT);
-  // Драйвери фізично знеструмлені!
-  digitalWrite(R_EN_PIN, LOW); 
-  digitalWrite(L_EN_PIN, LOW); 
+  
 
   ledcAttach(R_RPWM_PIN, pwmFreq, pwmRes);
   ledcAttach(R_LPWM_PIN, pwmFreq, pwmRes);
